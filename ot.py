@@ -1,3 +1,10 @@
+"""
+Smooth and Sparse Optimal Transport.
+Mathieu Blondel, Vivien Seguy, Antoine Rolet.
+In Proceedings of Artificial Intelligence and Statistics (AISTATS), April 2018.
+https://arxiv.org/abs/1710.06276
+"""
+
 # Author: Mathieu Blondel, 2018
 # License: BSD
 
