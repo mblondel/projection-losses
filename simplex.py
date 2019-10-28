@@ -35,6 +35,13 @@ def project_simplex(V, z=1, axis=None):
 
 # Code by Andre Martins.
 def constrained_softmax(z, u):
+    """
+    Solve argmin_a <a, log a> - <a, z> s.t. a <= u, \sum_i a_i = 1.
+
+    Learning what’s easy: Fully differentiable neural easy-first taggers.
+    A. F. Martins and J. Kreutzer.
+    In Proc. of EMNLP, pages 349–362, 2017.
+    """
     z -= np.mean(z)
     q = np.exp(z)
     active = np.ones(len(u))
