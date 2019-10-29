@@ -53,6 +53,7 @@ def test_linear_oracle():
                 assert_almost_equal(sol, sol2)
 
                 # Test vectorization.
-                sol3 = poly.argmax([theta])
-                assert_equal(len(sol3), 1)
+                sol3 = poly.argmax([theta, theta])
+                assert_equal(len(sol3), 2)
                 assert_almost_equal(sol3[0].dot(theta), sol2)
+                assert_almost_equal(sol3[1].dot(theta), sol2)

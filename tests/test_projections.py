@@ -48,9 +48,10 @@ def test_Euclidean_projection():
             assert_less(error, 1e-5)
 
             # Test vectorization.
-            sol_proj2 = poly.Euclidean_project([theta])
-            assert_equal(len(sol_proj2), 1)
+            sol_proj2 = poly.Euclidean_project([theta, theta])
+            assert_equal(len(sol_proj2), 2)
             assert_array_almost_equal(sol_proj2[0], sol_proj)
+            assert_array_almost_equal(sol_proj2[1], sol_proj)
 
 
 def test_KL_projection():
@@ -84,6 +85,7 @@ def test_KL_projection():
             assert_less(error, 1e-3)
 
             # Test vectorization.
-            sol_proj2 = poly.KL_project([theta])
-            assert_equal(len(sol_proj2), 1)
+            sol_proj2 = poly.KL_project([theta, theta])
+            assert_equal(len(sol_proj2), 2)
             assert_array_almost_equal(sol_proj2[0], sol_proj)
+            assert_array_almost_equal(sol_proj2[1], sol_proj)

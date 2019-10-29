@@ -144,13 +144,22 @@ class ProbabilitySimplex(Polytope):
         else:
             raise ValueError("Invalid shape for theta.")
 
-    # FIXME: vectorize
-    def _KL_project(self, theta):
+    def KL_project(self, theta):
         theta = np.array(theta)
+
+        flat = len(theta.shape) == 1
+        if flat:
+            theta = theta.reshape(1, -1)
+
         # Just the usual softmax with the usual stability trick.
-        max_theta = np.max(theta)
-        exp_theta = np.exp(theta - max_theta)
-        return exp_theta / np.sum(exp_theta)
+        max_theta = np.max(theta, axis=1)
+        exp_theta = np.exp(theta - max_theta[:, np.newaxis])
+        ret = exp_theta / np.sum(exp_theta, axis=1)[:, np.newaxis]
+
+        if flat:
+            ret = np.ravel(ret)
+
+        return ret
 
     # FIXME: vectorize
     def _argmax(self, theta):
