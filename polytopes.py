@@ -1,11 +1,12 @@
 # Author: Mathieu Blondel, 2019
 # License: BSD
 
+from itertools import product
+
 import numpy as np
 
 import ot
 from simplex import project_simplex, constrained_softmax
-from scipy.special import comb
 
 
 def _vectorize(func, theta):
@@ -107,30 +108,6 @@ class Polytope(object):
         return _vectorize(self._inv_phi, Y)
 
 
-def _powerset(s):
-    if not s:
-        return [[],]
-
-    ret = _powerset(s[:-1])
-
-    union = []
-    for s2 in ret:
-        union.append(s2 + [s[-1]])
-
-    return ret + union
-
-
-def powerset(s, max_size=None, min_size=0):
-    s = list(s)
-
-    ret = _powerset(s)
-
-    if max_size is None:
-        max_size = len(s)
-
-    return [s for s in ret if min_size <= len(s) and len(s) <= max_size]
-
-
 class UnitCube(Polytope):
 
     def Euclidean_project(self, theta):
@@ -149,13 +126,8 @@ class UnitCube(Polytope):
         return y
 
     def vertices(self, size):
-        ind = np.arange(size)
-
-        for s in powerset(ind):
-            y = np.zeros(size)
-            for i in s:
-                y[i] = 1
-            yield y
+        for tup in product([0,1], repeat=size):
+            yield np.array(tup)
 
 
 class ProbabilitySimplex(Polytope):
@@ -230,7 +202,6 @@ class CartesianProduct(Polytope):
         return ret.ravel()
 
     def vertices(self, size):  # size = len(theta)
-        from itertools import product
         n_classes = int(np.sqrt(size))
         for prod in product(np.eye(n_classes), repeat=n_classes):
             yield np.array(prod).ravel()
@@ -320,14 +291,12 @@ class Knapsack(Polytope):
         return sol
 
     def vertices(self, size):
-        ind = np.arange(size)
-
-        for s in powerset(ind, max_size=self.max_labels,
-                          min_size=self.min_labels):
-            y = np.zeros(size)
-            for i in s:
-                y[i] = 1
-            yield y
+        max_labels = size if self.max_labels is None else self.max_labels
+        for tup in product([0,1], repeat=size):
+            ret = np.array(tup)
+            s = np.sum(ret)
+            if self.min_labels <= s and s <= max_labels:
+                yield ret
 
 
 class Birkhoff(Polytope):
