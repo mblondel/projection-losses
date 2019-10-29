@@ -2,7 +2,9 @@
 # License: BSD
 
 import numpy as np
+
 from sklearn.utils.testing import assert_almost_equal
+from sklearn.utils.testing import assert_equal
 
 from polytopes import UnitCube
 from polytopes import ProbabilitySimplex
@@ -45,6 +47,12 @@ def test_linear_oracle():
                 else:
                     theta = func(5)
 
+                # Test correctness.
                 sol = np.dot(bf_search(poly, theta), theta)
                 sol2 = np.dot(poly.argmax(theta), theta)
                 assert_almost_equal(sol, sol2)
+
+                # Test vectorization.
+                sol3 = poly.argmax([theta])
+                assert_equal(len(sol3), 1)
+                assert_almost_equal(sol3[0].dot(theta), sol2)

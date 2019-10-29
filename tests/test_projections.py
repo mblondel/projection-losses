@@ -15,6 +15,8 @@ from fw import project_fw
 from fista import KL_project_fista
 
 from sklearn.utils.testing import assert_less
+from sklearn.utils.testing import assert_array_almost_equal
+from sklearn.utils.testing import assert_equal
 
 
 def test_Euclidean_projection():
@@ -40,9 +42,15 @@ def test_Euclidean_projection():
                              max_iter=1000,
                              tol=1e-9)
 
+            # Test correctness.
             sol_proj = poly.Euclidean_project(theta)
             error = np.mean((sol - sol_proj) ** 2)
             assert_less(error, 1e-5)
+
+            # Test vectorization.
+            sol_proj2 = poly.Euclidean_project([theta])
+            assert_equal(len(sol_proj2), 1)
+            assert_array_almost_equal(sol_proj2[0], sol_proj)
 
 
 def test_KL_projection():
@@ -70,6 +78,12 @@ def test_KL_projection():
                              max_iter=1000,
                              tol=1e-9)
 
+            # Test correctness.
             sol_proj = poly.KL_project(theta)
             error = np.mean((sol - sol_proj) ** 2)
             assert_less(error, 1e-3)
+
+            # Test vectorization.
+            sol_proj2 = poly.KL_project([theta])
+            assert_equal(len(sol_proj2), 1)
+            assert_array_almost_equal(sol_proj2[0], sol_proj)

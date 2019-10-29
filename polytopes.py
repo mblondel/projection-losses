@@ -114,9 +114,11 @@ class UnitCube(Polytope):
         return np.minimum(np.maximum(theta, 0), 1)
 
     def KL_project(self, theta):
+        theta = np.array(theta)
         return np.minimum(np.exp(theta - 1), 1)
 
     def argmax(self, theta):
+        theta = np.array(theta)
         return (theta > 0).astype(int)
 
     def phi(self, y):
@@ -133,6 +135,8 @@ class UnitCube(Polytope):
 class ProbabilitySimplex(Polytope):
 
     def Euclidean_project(self, theta):
+        theta = np.array(theta)
+
         if len(theta.shape) == 1:
             return project_simplex(theta)
         elif len(theta.shape) == 2:
@@ -142,6 +146,7 @@ class ProbabilitySimplex(Polytope):
 
     # FIXME: vectorize
     def _KL_project(self, theta):
+        theta = np.array(theta)
         # Just the usual softmax with the usual stability trick.
         max_theta = np.max(theta)
         exp_theta = np.exp(theta - max_theta)
@@ -150,7 +155,7 @@ class ProbabilitySimplex(Polytope):
     # FIXME: vectorize
     def _argmax(self, theta):
         # Return one-hot vectors.
-        n_classes = theta.shape[0]
+        n_classes = len(theta)
         ret = np.zeros(n_classes)
         ret[np.argmax(theta)] = 1
         return ret
@@ -258,6 +263,7 @@ class Knapsack(Polytope):
                 return self._project_equality(theta, self.min_labels)
 
     def _KL_project(self, theta):
+        theta = np.array(theta)
         # First attempt to project on the unit cube.
         u = np.minimum(np.exp(theta - 1), 1)
         su = np.sum(u)
@@ -306,6 +312,7 @@ class Birkhoff(Polytope):
         self.tol = tol
 
     def _project(self, theta, regul):
+        theta = np.array(theta)
         d = theta.shape[0]
         n_classes = int(np.sqrt(d))
         theta = theta.reshape(n_classes, n_classes)
