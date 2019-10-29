@@ -14,7 +14,7 @@ Supported polytopes
 * Birkhoff polytope
 * Permutahedron
 * Order simplex
-* Cardinal products
+* Cartesian products
 
 Installation
 ------------
@@ -34,18 +34,18 @@ References
         Mathieu Blondel, André F. T. Martins, Vlad Niculae.
         In Proc. of AISTATS 2019.
         [`arXiv <https://arxiv.org/abs/1805.09717>`_]
-        
+
 .. [3] *Learning with Fenchel-Young Losses.*
         Mathieu Blondel, André F. T. Martins, Vlad Niculae.
         Preprint.
         [`arXiv <https://arxiv.org/abs/1901.02324>`_]
-        
+
 .. [4] *Structured Prediction with Projection Oracles.*
         Mathieu Blondel.
         In Proc. of NeurIPS 2019.
         [`arXiv <https://arxiv.org/abs/1910.11369>`_]
-        
-        
+
+
 Author
 ------
 
