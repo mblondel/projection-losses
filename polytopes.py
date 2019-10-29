@@ -405,6 +405,12 @@ class Permutahedron(Polytope):
         self.w_sorted = w_sorted
 
     def _Euclidean_project(self, theta):
+        """
+        Efficient bregman projections onto the permutahedron and
+        related polytopes.
+        C. H. Lim and S. J. Wright.
+        In Proc. of AISTATS, pages 1205–1213, 2016
+        """
         from sklearn.isotonic import isotonic_regression
 
         n_classes = len(theta)
