@@ -5,9 +5,6 @@ from itertools import product
 
 import numpy as np
 
-import ot
-from simplex import project_simplex, constrained_softmax
-
 
 def _vectorize(func, theta):
     theta = np.array(theta)
@@ -135,6 +132,8 @@ class UnitCube(Polytope):
 class ProbabilitySimplex(Polytope):
 
     def Euclidean_project(self, theta):
+        from simplex import project_simplex
+
         theta = np.array(theta)
 
         if len(theta.shape) == 1:
@@ -272,6 +271,8 @@ class Knapsack(Polytope):
                 return self._project_equality(theta, self.min_labels)
 
     def _KL_project(self, theta):
+        from simplex import constrained_softmax
+
         theta = np.array(theta)
         # First attempt to project on the unit cube.
         u = np.minimum(np.exp(theta - 1), 1)
@@ -321,10 +322,19 @@ class Birkhoff(Polytope):
         self.tol = tol
 
     def _project(self, theta, regul):
+        import ot
+
         theta = np.array(theta)
         d = theta.shape[0]
         n_classes = int(np.sqrt(d))
         theta = theta.reshape(n_classes, n_classes)
+
+        if regul == "l2":
+            regul = ot.SquaredL2(gamma=1.0)
+        elif regul == "entropic":
+            regul = ot.NegEntropy(gamma=1.0)
+        else:
+            raise ValueError
 
         o = np.ones(n_classes)
 
@@ -336,10 +346,10 @@ class Birkhoff(Polytope):
         return ret.ravel()
 
     def _Euclidean_project(self, theta):
-        return self._project(theta, ot.SquaredL2(gamma=1.0))
+        return self._project(theta, "l2")
 
     def _KL_project(self, theta):
-        return self._project(theta, ot.NegEntropy(gamma=1.0))
+        return self._project(theta, "entropic")
 
     def _argmax(self, theta):
         from scipy.optimize import linear_sum_assignment
