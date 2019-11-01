@@ -431,13 +431,17 @@ class Permutahedron(Polytope):
         w = np.array(w)
         if not self.w_sorted:
             w = w[np.argsort(w)[::-1]]
+
         perm = np.argsort(theta)[::-1]
         theta = theta[perm]
-        dual_sol = isotonic_regression(w - theta, increasing=True)
-        primal_sol = dual_sol + theta
+
+        dual_sol = isotonic_regression(theta - w, increasing=False)
+
         # Or equivalently
-        #dual_sol = isotonic_regression(theta - w, increasing=False)
-        #primal_sol = theta - dual_sol
+        #dual_sol = -isotonic_regression(w - theta, increasing=True)
+
+        primal_sol = theta - dual_sol
+
         return primal_sol[inv_permutation(perm)]
 
     def _KL_project(self, theta):
