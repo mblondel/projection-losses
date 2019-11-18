@@ -28,11 +28,17 @@ def bf_search(poly, theta):
 
 
 def test_linear_oracle():
+    w = np.array([0.5, 0.4, 0.3, 0.2, 0.1])
+    w2 = np.array([0.4, 0.1, 0.2, 0.3, 0.5])
+
     for poly in (UnitCube(),
                  ProbabilitySimplex(),
                  Knapsack(max_labels=4),
                  Knapsack(min_labels=2, max_labels=4),
                  Permutahedron(),
+                 Permutahedron(w),
+                 Permutahedron(w, w_sorted=True),
+                 Permutahedron(w2),
                  Birkhoff(),
                  CartesianProduct(ProbabilitySimplex()),
                  OrderSimplex(),

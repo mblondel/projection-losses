@@ -402,6 +402,7 @@ class Birkhoff(Polytope):
         for y in Permutahedron().vertices(size):
             yield self._phi(y)
 
+
 def inv_permutation(p):
     ret = np.zeros(len(p), dtype=np.int)
     ret[p] = np.arange(len(p))
@@ -414,6 +415,20 @@ class Permutahedron(Polytope):
         self.w = w
         self.w_sorted = w_sorted
 
+    def _get_w(self, n_classes):
+        # Our implementation assumes that w is sorted.
+        # This helper function takes care of that.
+        w = self.w
+
+        if w is None:
+            w = np.arange(n_classes)[::-1]
+        else:
+            w = np.array(w)
+            if not self.w_sorted:
+                w = w[np.argsort(w)[::-1]]
+
+        return w
+
     def _Euclidean_project(self, theta):
         """
         Efficient bregman projections onto the permutahedron and
@@ -424,13 +439,7 @@ class Permutahedron(Polytope):
         from sklearn.isotonic import isotonic_regression
 
         n_classes = len(theta)
-        w = self.w
-        if w is None:
-            w = np.arange(n_classes)[::-1]
-
-        w = np.array(w)
-        if not self.w_sorted:
-            w = w[np.argsort(w)[::-1]]
+        w = self._get_w(n_classes)
 
         perm = np.argsort(theta)[::-1]
         theta = theta[perm]
@@ -449,16 +458,9 @@ class Permutahedron(Polytope):
 
     def _MAP(self, theta):
         n_classes = len(theta)
-        w = self.w
-        if w is None:
-            w = np.arange(n_classes)[::-1]
-
-        w = np.array(w)
-        if not self.w_sorted:
-            w = w[np.argsort(w)[::-1]]
+        w = self._get_w(n_classes)
         perm = np.argsort(theta)[::-1]
-        inv = inv_permutation(perm)
-        return w[inv]
+        return w[inv_permutation(perm)]
 
     def _argmax(self, theta):
         return self._MAP(theta)
@@ -469,8 +471,9 @@ class Permutahedron(Polytope):
 
     def vertices(self, size):
         from itertools import permutations
+        w = self._get_w(size)
         for perm in permutations(np.arange(size)):
-            yield np.array(perm)
+            yield w[np.array(perm)]
 
 
 class OrderSimplex(Polytope):
